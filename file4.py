@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from selenium.webdriver.common.by import By
 from fake_useragent import UserAgent
 
 url = 'https://parsinger.ru/table/1/index.html'
@@ -34,7 +35,6 @@ html = GetHtml(url=url).get_html()
 class Parser:
     def __init__(self, html):
         self.soup = BeautifulSoup(html, 'lxml')
-        self.result = set()
 
     def _rows(self) -> list:  # get list of rows
         table = self.soup.select_one('body').select_one('div.main').select_one('table')
@@ -47,16 +47,22 @@ class Parser:
         return res
 
     def run(self):
+        result = set()
         rows = self._rows()[1:]
         for row in rows:
             list_row = self._get_date_in_row(row)
             try:
                 res = set(map(float, list_row))
-                self.result.update(res)
+                result.update(res)
             except:
                 print('??????')
                 pass
-        print(sum(self.result))
+        print(sum(result))
 
 
-Parser(html=html).run()
+def mane():
+    Parser(html=html).run()
+
+
+if __name__ == "__main__":
+    mane()
