@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-from selenium.webdriver.common.by import By
 from fake_useragent import UserAgent
 
 url = 'https://parsinger.ru/table/1/index.html'
