@@ -28,9 +28,6 @@ class GetHtml:
         return 'ERROR {}'.format(response.status_code)
 
 
-html = GetHtml(url=url).get_html()
-
-
 class Parser:
     def __init__(self, html):
         self.soup = BeautifulSoup(html, 'lxml')
@@ -60,6 +57,7 @@ class Parser:
 
 
 def mane():
+    html = GetHtml(url=url).get_html()
     Parser(html=html).run()
 
 
