@@ -6,7 +6,7 @@ import html5lib
 
 from creater_dir_file import create_dir, f_ua, record_file
 
-DIR_NAME = 'admin'
+DIR_NAME = 'management'
 
 URL = "http://policlinic2v.ru/about/administraciya/"
 
