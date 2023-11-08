@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from parserlesson4_9.file4 import GetHtml
+from parser_lesson4_8.file4 import GetHtml
 
 url = 'https://parsinger.ru/4.8/8/index.html'
 

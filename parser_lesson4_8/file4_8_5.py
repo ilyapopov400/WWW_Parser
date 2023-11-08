@@ -1,4 +1,4 @@
-from parserlesson4_9.file4 import GetHtml, Parser
+from parser_lesson4_8.file4 import GetHtml, Parser
 
 url = 'https://parsinger.ru/table/5/index.html'
 
