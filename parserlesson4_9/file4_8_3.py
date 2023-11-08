@@ -1,15 +1,14 @@
-from file4 import GetHtml, Parser
+from parserlesson4_9.file4 import GetHtml, Parser
 
-url = 'https://parsinger.ru/table/5/index.html'
+url = 'https://parsinger.ru/table/3/index.html'
 
 html = GetHtml(url=url).get_html()
 
 
 class MyParser(Parser):
     def _get_date_in_row(self, row) -> list:  # get list of date in one row
-        res1 = row.find(name='td', attrs={'class': 'orange'})
-        res2 = row.find_all(name='td')[-1]
-        res = list(map(lambda x: float(x.text), (res1, res2)))
+        res = row.find_all(name='b')
+        res = list(map(lambda x: x.text, res))
         return res
 
     def run(self):
@@ -17,13 +16,14 @@ class MyParser(Parser):
         rows = self._rows()[1:]
         for row in rows:
             res = self._get_date_in_row(row=row)
-            result += res[0] * res[1]
-
+            result += sum(map(float, res))
         print(result)
 
 
+
 def mane():
-    MyParser(html=html).run()
+    a = MyParser(html=html)
+    a.run()
 
 
 if __name__ == "__main__":
