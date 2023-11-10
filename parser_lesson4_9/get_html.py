@@ -1,6 +1,7 @@
 import requests
 from fake_useragent import UserAgent
 import os
+import csv
 
 
 class GetHtml:
@@ -43,8 +44,7 @@ class GetHtml:
         if self._create_save_file():  # если файл существует, читаем с него данные
             with open(file='{}/{}/{}'.format(self.path, self.directori, self.filename), mode='r') as f:
                 html = f.read()
-        if True is False:
-            pass
+
         else:  # если файла нет, вызываем _response_html и пишем его в файл
             html = self._response_html()
             if not html:
@@ -52,6 +52,28 @@ class GetHtml:
             with open(file='{}/{}/{}'.format(self.path, self.directori, self.filename), mode='w') as f:
                 f.write(html)
         return html
+
+
+class CreatCSV:
+    def __init__(self, head, rows):
+        self.head = head
+        self.rows = rows
+        self.directori = 'datas_dir'  # имя директории и файла для хранения csv
+        self.filename = 'data.csv'
+        self.path = os.getcwd()
+
+    def _create_save_directory(self):
+        if not os.path.exists('{}/{}'.format(self.path, self.directori)):
+            os.mkdir('{}/{}'.format(self.path, self.directori))
+
+    def run(self):
+        self._create_save_directory()
+        path_dir = '{}/{}'.format(self.directori, self.filename)
+        with open(file=path_dir, mode='w', encoding='utf-8-sig', newline='') as file:
+            writer = csv.writer(file, delimiter=';')
+            if bool(self.head):
+                writer.writerow(self.head)
+            writer.writerows(self.rows)
 
 
 def mane():
