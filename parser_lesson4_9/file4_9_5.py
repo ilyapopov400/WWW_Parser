@@ -3,7 +3,7 @@ import os
 from fake_useragent import UserAgent
 import requests
 import csv
-from tqdm import tqdm
+import asyncio
 
 
 class GetHtml:
@@ -138,11 +138,19 @@ def mane():
     link_list = list(map(lambda x: prefics + x, link_list))  # список ссылок на отдельные карточки
 
     rows = list()
-    for url in tqdm(link_list):
+
+    async def get_html(url):
         html = GetHtml(url=url).get_html()
         row = ParserCard(html=html).run()
         row.append(url)
         rows.append(row)
+
+    async def mn():
+        for url in link_list:
+            task = asyncio.create_task(get_html(url=url))
+            await task
+
+    asyncio.run(mn())
 
     head = ['Наименование', 'Бренд', 'Форм-фактор', 'Ёмкость', 'Объём буф. памяти', 'Цена']
 
