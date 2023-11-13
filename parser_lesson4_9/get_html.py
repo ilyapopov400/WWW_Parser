@@ -58,7 +58,7 @@ class CreatCSV:
     def __init__(self, head, rows):
         self.head = head
         self.rows = rows
-        self.directori = 'datas_dir'  # имя директории и файла для хранения csv
+        self.directori = 'datas_csv'  # имя директории и файла для хранения csv
         self.filename = 'data.csv'
         self.path = os.getcwd()
 
