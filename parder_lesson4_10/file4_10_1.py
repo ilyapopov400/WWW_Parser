@@ -1,6 +1,4 @@
 import bs4
-import os
-import json
 import get_html
 
 KEY = [
