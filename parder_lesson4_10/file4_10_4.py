@@ -3,6 +3,7 @@ import requests
 from fake_useragent import UserAgent
 import os
 import json
+import asyncio
 
 
 class GetHtml:
@@ -147,7 +148,8 @@ def mane():
     cards_link = list(map(lambda x: 'https://parsinger.ru/html/' + x, cards_link))  # собрали линки карточек
 
     json_list = list()
-    for url in cards_link:
+
+    async def get_dict(url):
         html = GetHtml(url=url).get_html()
         if not html:
             print('битая ссылка: ', url)
@@ -155,6 +157,13 @@ def mane():
         data_card["link"] = url
 
         json_list.append(data_card)
+
+    async def mn():
+        for url in cards_link:
+            task = asyncio.create_task(get_dict(url=url))
+            await task
+
+    asyncio.run(mn())
 
     CreateJSON(ls=json_list).run()
 
