@@ -30,7 +30,7 @@ class ParserLink:
         return date_list
 
 
-class ParserCard:  # TODO
+class ParserCard:
     def __init__(self, html):
         self.soup = bs4.BeautifulSoup(markup=html, features="lxml")
 
