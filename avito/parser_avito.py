@@ -2,7 +2,12 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from icecream import ic
-from bs4 import BeautifulSoup
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver import Keys
+from selenium.common.exceptions import NoAlertPresentException
+from tqdm import tqdm
+from itertools import product
+from selenium.common.exceptions import NoSuchElementException
 
 options_chrome = webdriver.ChromeOptions()
 options_chrome.add_argument('user-data-dir=/Users/ilapopov/Library/Application Support/Google/Chrome/Default')
@@ -13,34 +18,49 @@ URL = 'https://www.avito.ru'
 
 class Parser:
     def __init__(self, url: str, to_find: str):
-        self.options_chrome = webdriver.ChromeOptions()
         self.url = url
+        self.options_chrome = webdriver.ChromeOptions()
+        self.options_chrome.add_argument(
+            'user-data-dir=/Users/ilapopov/Library/Application Support/Google/Chrome/Default')
+        # self.options_chrome.add_argument('--headless')
         self.to_find = to_find
 
-    def _start_page(self, driver):
+    def _start_page(self, browser):
         '''
         работа со стартовой страницей,
-        зашли в поиск, набрали что ищем, нжали кнопку "найти"
+        зашли в поиск, набрали что ищем, нажали кнопку "найти"
         :param driver:
         :return:
         '''
-        form = driver.find_element(By.CLASS_NAME, "input-input-Zpzc1")
+        form = browser.find_element(By.CLASS_NAME, "input-input-Zpzc1")
         form.send_keys(self.to_find)  # в поиск записали текст с to_find
         time.sleep(3)
 
-        form = driver.find_element(By.CLASS_NAME, "desktop-9uhrzn")
+        form = browser.find_element(By.CLASS_NAME, "desktop-9uhrzn")
         form.click()  # нажали кнопку "найти"
         time.sleep(3)
 
-    def _one_page(self, driver):  # TODO браузер открывает новое окно, driver видит старое!!!
+    def _one_page(self, browser):  # TODO
         # html_content = driver.page_source
         # soup = BeautifulSoup(html_content, 'html.parser')
         #
         # title = soup.find('title')
 
-        ic(driver)
+        try:
+            result_text = str()
+            text = browser.find_element(By.TAG_NAME, "body").find_element(By.ID, "app").find_element(By.CLASS_NAME,
+                                                                                                     "style-item-description-html-qCwUL")
 
-    def _list_pages(self, driver):
+            text = text.find_elements(By.TAG_NAME, "p")
+            for i in text:
+                result_text += i.text
+
+            ic(result_text)
+        except NoSuchElementException as ex:
+            ic(ex)
+            time.sleep(1)
+
+    def _list_pages(self, browser):
         '''
         со страницы, где расположен список найденных страниц, получаем отдельную страницу
 
@@ -48,31 +68,37 @@ class Parser:
         :return:
         '''
 
-        form = driver.find_element(By.CLASS_NAME, "styles-singlePageWrapper-eKDyt")
+        form = browser.find_element(By.CLASS_NAME, "styles-singlePageWrapper-eKDyt")
         form = form.find_element(By.CLASS_NAME, "styles-module-theme-CRreZ")
         form = form.find_element(By.CLASS_NAME, "index-root-KVurS")
         forms = form.find_elements(By.CLASS_NAME,
                                    "iva-item-title-py3i_")
 
         for it, page in enumerate(iterable=forms, start=1):  # проходим по страницам
-            ic(it)
             page.click()
-            time.sleep(3)
-            self._one_page(driver=driver)
-
-            if it == 5:
+            time.sleep(1)
+            if it == 9:  # количество страниц, для отладки, потом убрать
                 break
-        time.sleep(1)
+
+    def _go_to_windows(self, browser):
+        '''
+        проходим по открытым окнам
+        '''
+        for window in browser.window_handles:
+            browser.switch_to.window(window)
+            self._one_page(browser=browser)  # работа с открытым окном
+            time.sleep(2)
 
     def _parser(self):
-        with webdriver.Chrome(options=self.options_chrome) as driver:
-            driver.get(self.url)
+        with webdriver.Chrome(options=self.options_chrome) as browser:
+            browser.get(self.url)
 
-            self._start_page(driver=driver)
+            self._start_page(browser=browser)  # открыли стартовую страницу сайта и ввели поиск
             time.sleep(1)
 
-            self._list_pages(driver=driver)
+            self._list_pages(browser=browser)  # переходим по найденным ссылкам, открываем новые окна
             time.sleep(2)
+            self._go_to_windows(browser=browser)  # проходим по открытым окнам
 
     def run(self):
         self._parser()
