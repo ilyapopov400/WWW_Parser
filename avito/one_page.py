@@ -10,35 +10,37 @@ from itertools import product
 from selenium.common.exceptions import NoSuchElementException
 
 URL = 'https://www.avito.ru/volgograd/kollektsionirovanie/lp_deep_purple_24_carat_purple_japan_1985_mint_3567795461'
-
+# URL = "https://www.avito.ru/volgograd/kollektsionirovanie/lp_deep_purple_24_carat_purple_japan_1985_mint_3567795461"
 
 class ParserOnePage:
+    '''
+    парсинг одной страницы avito
+    :return текст описания товара
+    '''
 
     def __init__(self, url: str):
         self.url = url
         self.options_chrome = webdriver.ChromeOptions()
         self.options_chrome.add_argument(
             'user-data-dir=/Users/ilapopov/Library/Application Support/Google/Chrome/Default')
-        # self.options_chrome.add_argument('--headless')
+        self.options_chrome.add_argument('--headless')
 
-    def _get_text(self, browser):
-        window = browser.find_element(By.TAG_NAME, "html").text
+    def _target_text(self, browser) -> list:
+        target_text = list()
+        window = browser.find_element(By.CSS_SELECTOR, "div.style-item-description-html-qCwUL")
+        for line in window.find_elements(By.TAG_NAME, "p"):
+            target_text.append(line.text)
+        return target_text
 
-        ic(window)
-
-
-    def _parser(self):
+    def _parser(self) -> str:
         with webdriver.Chrome(options=self.options_chrome) as browser:
             browser.get(self.url)
-            result = 0
 
-            self._get_text(browser=browser)
+            result = self._target_text(browser=browser)
 
-            time.sleep(3)
+            return ", ".join(result)
 
-            return result
-
-    def run(self):
+    def run(self) -> str:
         result = self._parser()
         return result
 
