@@ -60,6 +60,8 @@ class Parser:
         :param browser:
         :return:
         '''
+        browser.implicitly_wait(5)
+
         form = browser.find_element(By.CLASS_NAME, "input-input-Zpzc1")
         form.send_keys(self.to_find)  # в поиск записали текст с to_find
         time.sleep(3)
@@ -116,8 +118,8 @@ class Parser:
 
     def _parser(self):
         with webdriver.Chrome(options=self.options_chrome) as browser:
-            browser.get(self.url)
             browser.implicitly_wait(5)
+            browser.get(self.url)
 
             self._start_page(browser=browser)  # открыли стартовую страницу сайта и ввели поиск
 
