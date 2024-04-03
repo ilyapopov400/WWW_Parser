@@ -3,8 +3,12 @@ from fake_useragent import UserAgent
 
 KEY = "0a092521cfbd7a103f477a21c2231d72"
 URL = "https://api.himera-search.info/2.0/phone"
-params = {"key": KEY,
-          "phone": "79123456789"}
+phone = "79123456789"
+
+data = {
+    "key": KEY,
+    "phone": phone
+}
 
 
 class GetHtml:
@@ -12,9 +16,8 @@ class GetHtml:
     получаем html в виде строки с использованием UserAgent
     '''
 
-    def __init__(self, url, params=None):
+    def __init__(self, url):
         self.url = url
-        self.params = params
 
     def _fake_user_agent(self):  # crate fake user agent
         ua = UserAgent()
@@ -22,8 +25,8 @@ class GetHtml:
         return fake_ua
 
     def _response_html(self) -> str:
-        header = self._fake_user_agent()
-        response = requests.get(url=self.url, params=self.params, headers=header)
+        headers = self._fake_user_agent()
+        response = requests.post(url=self.url, headers=headers, data=data)
         response.encoding = 'utf-8'
         if response:
             print(response.status_code)
@@ -38,7 +41,7 @@ class GetHtml:
 
 
 def mane():
-    result = GetHtml(url=URL, params=params)()
+    result = GetHtml(url=URL)()
     print(result)
 
 
