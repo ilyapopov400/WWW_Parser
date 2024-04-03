@@ -57,7 +57,6 @@ class Parser:
             print(*a, sep='\n*******\n')
             print('&&&&&&&&')
 
-
     def __call__(self):
         self._run()
 
