@@ -1,11 +1,14 @@
 import requests
 import json
 from fake_useragent import UserAgent
+from key import KEY
+
+KEY = KEY
 
 
 class FormingRequest:
     data_packaging = {
-        "name": {
+        "name_standart": {
             "data": {
                 "url": "https://api.himera-search.info/2.0/name_standart"
             },
@@ -40,7 +43,7 @@ class FormingRequest:
 
 
 class GetJson:
-    KEY = "0a092521cfbd7a103f477a21c2231d72"
+    KEY = KEY
     '''
     возвращаем json при вызове экземпляра класса
     '''
